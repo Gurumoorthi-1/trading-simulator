@@ -113,15 +113,18 @@ const PerformanceChart = () => {
               dataKey="date"
               axisLine={false}
               tickLine={false}
-              tick={{ fill: '#94a3b8', fontSize: 12 }}
+              tick={{ fill: '#94a3b8', fontSize: 10 }}
               dy={10}
               minTickGap={30}
             />
             <YAxis
-              hide={true}
-              domain={['dataMin - 1000', 'dataMax + 1000']}
+              axisLine={false}
+              tickLine={false}
+              tick={{ fill: '#94a3b8', fontSize: 10 }}
+              tickFormatter={(v) => `$${(v / 1000).toFixed(1)}k`}
+              width={45}
             />
-            <Tooltip content={<CustomTooltip />} />
+            <Tooltip content={(props) => <CustomTooltip {...props} />} />
             <Area
               type="monotone"
               dataKey="value"

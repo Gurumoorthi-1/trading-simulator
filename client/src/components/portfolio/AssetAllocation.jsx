@@ -105,8 +105,8 @@ const AssetAllocation = () => {
                 data={allocationData}
                 cx="50%"
                 cy="50%"
-                innerRadius={70}
-                outerRadius={100}
+                innerRadius={60}
+                outerRadius={80}
                 paddingAngle={allocationData.length > 1 ? 4 : 0}
                 dataKey="value"
                 stroke="none"
