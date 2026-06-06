@@ -3,7 +3,12 @@ import axios from 'axios';
 // ==================== Axios Base Instance ====================
 // Dev: http://localhost:5000/api
 // Production (Vercel + Render): VITE_API_URL set in Vercel environment variables pointing to Render backend
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+let API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
+// Double check that /api is at the end of the URL
+if (API_BASE_URL && !API_BASE_URL.endsWith('/api') && !API_BASE_URL.endsWith('/api/')) {
+  API_BASE_URL = API_BASE_URL.endsWith('/') ? `${API_BASE_URL}api` : `${API_BASE_URL}/api`;
+}
 
 const api = axios.create({
   baseURL: API_BASE_URL,
