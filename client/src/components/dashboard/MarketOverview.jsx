@@ -85,7 +85,7 @@ const MarketOverview = ({ isLoading }) => {
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={isDark ? "#334155" : "#e2e8f0"} opacity={0.4} />
-            <Tooltip content={<CustomTooltip />} />
+            <Tooltip content={(props) => <CustomTooltip {...props} />} />
             <Area
               type="monotone"
               dataKey="value"

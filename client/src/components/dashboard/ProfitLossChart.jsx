@@ -91,7 +91,10 @@ const ProfitLossChart = ({ isLoading: parentLoading }) => {
         <div className="flex-1 w-full">
           <ResponsiveContainer width="100%" height="100%" minWidth={1}>
             <BarChart data={chartData} margin={{ top: 5, right: 0, left: 10, bottom: 0 }}>
-              <Tooltip content={<CustomTooltip />} cursor={{ fill: isDark ? 'rgba(51,65,85,0.2)' : 'rgba(226,232,240,0.4)' }} />
+              <Tooltip
+                content={(props) => <CustomTooltip {...props} />}
+                cursor={{ fill: isDark ? 'rgba(51,65,85,0.2)' : 'rgba(226,232,240,0.4)' }}
+              />
               <Bar dataKey="net" radius={[6, 6, 0, 0]} maxBarSize={36}>
                 {chartData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.net >= 0 ? '#22c55e' : '#ef4444'} />
