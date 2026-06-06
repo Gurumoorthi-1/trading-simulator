@@ -134,9 +134,9 @@ const AdminAIAnalytics = () => {
                   data={analytics?.featureUsage || []}
                   cx="50%"
                   cy="50%"
-                  labelLine={false}
-                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                  outerRadius={100}
+                  labelLine={true}
+                  label={({ name, percent }) => `${name} ${(percent ? percent * 100 : 0).toFixed(0)}%`}
+                  outerRadius={80}
                   dataKey="count"
                 >
                   {analytics?.featureUsage?.map((_, index) => (
