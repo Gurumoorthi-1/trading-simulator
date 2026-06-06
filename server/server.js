@@ -112,11 +112,24 @@ io.on('connection', (socket) => {
 // ==================== Global Middleware ====================
 
 // 1. CORS
-const corsOrigin = process.env.CLIENT_URL || (process.env.NODE_ENV === 'production' ? true : 'http://localhost:5173');
+const getOrigins = () => {
+  const origins = ['http://localhost:5173', 'http://localhost:3000'];
+  if (process.env.CLIENT_URL) {
+    // Ensure URL has protocol
+    const url = process.env.CLIENT_URL.startsWith('http')
+      ? process.env.CLIENT_URL
+      : `https://${process.env.CLIENT_URL}`;
+    origins.push(url);
+    // Also push the variant without trailing slash if present
+    origins.push(url.replace(/\/$/, ''));
+  }
+  return process.env.NODE_ENV === 'production' ? origins : true;
+};
+
 app.use(cors({
-  origin: corsOrigin,
+  origin: getOrigins(),
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token'],
 }));
 
