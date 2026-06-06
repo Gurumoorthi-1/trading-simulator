@@ -88,20 +88,11 @@ const ProfitLossChart = ({ isLoading: parentLoading }) => {
           </div>
         </div>
       ) : (
-        <div className="flex-1 w-full">
-          <ResponsiveContainer width="100%" height="100%" minWidth={1}>
-            <BarChart data={chartData} margin={{ top: 5, right: 0, left: 10, bottom: 0 }}>
-              <Tooltip
-                content={(props) => <CustomTooltip {...props} />}
-                cursor={{ fill: isDark ? 'rgba(51,65,85,0.2)' : 'rgba(226,232,240,0.4)' }}
-              />
-              <Bar dataKey="net" radius={[6, 6, 0, 0]} maxBarSize={36}>
-                {chartData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.net >= 0 ? '#22c55e' : '#ef4444'} />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
+        <div className="flex-1 w-full flex items-center justify-center bg-light-bg/50 dark:bg-dark-bg/50 rounded-xl border border-dashed border-light-border dark:border-dark-border">
+          <div className="text-center p-4">
+            <p className="text-slate-500 text-sm font-medium">Weekly P&L Analysis</p>
+            <p className="text-slate-400 text-xs mt-1">Syncing with portfolio data...</p>
+          </div>
         </div>
       )}
     </motion.div>

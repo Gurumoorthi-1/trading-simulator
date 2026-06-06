@@ -75,28 +75,11 @@ const MarketOverview = ({ isLoading }) => {
         </div>
       </div>
 
-      <div className="flex-1 w-full relative">
-        <ResponsiveContainer width="100%" height="100%" minWidth={1}>
-          <AreaChart data={chartData} margin={{ top: 10, right: 0, left: 10, bottom: 0 }}>
-            <defs>
-              <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#0ea5e9" stopOpacity={0.3} />
-                <stop offset="95%" stopColor="#0ea5e9" stopOpacity={0} />
-              </linearGradient>
-            </defs>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={isDark ? "#334155" : "#e2e8f0"} opacity={0.4} />
-            <Tooltip content={(props) => <CustomTooltip {...props} />} />
-            <Area
-              type="monotone"
-              dataKey="value"
-              stroke="#0ea5e9"
-              strokeWidth={3}
-              fillOpacity={1}
-              fill="url(#colorValue)"
-              animationDuration={1000}
-            />
-          </AreaChart>
-        </ResponsiveContainer>
+      <div className="flex-1 w-full relative flex items-center justify-center bg-light-bg/50 dark:bg-dark-bg/50 rounded-xl border border-dashed border-light-border dark:border-dark-border">
+        <div className="text-center">
+          <Activity size={32} className="mx-auto text-primary-500 mb-2 opacity-50" />
+          <p className="text-slate-500 text-sm">Portfolio Chart Optimizing...</p>
+        </div>
       </div>
     </motion.div>
   );
