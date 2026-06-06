@@ -1,0 +1,40 @@
+{
+  "name": "stock-trading-server",
+  "version": "1.0.0",
+  "description": "Stock Trading Simulation Platform - Backend API",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon server.js",
+    "start": "node server.js",
+    "seed": "node utils/seedData.js"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "axios": "^1.16.1",
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "csurf": "^1.11.0",
+    "dotenv": "^16.5.0",
+    "express": "^4.21.2",
+    "express-mongo-sanitize": "^2.2.0",
+    "express-rate-limit": "^7.5.0",
+    "express-session": "^1.19.0",
+    "express-validator": "^7.2.1",
+    "groq-sdk": "^1.2.1",
+    "helmet": "^8.2.0",
+    "hpp": "^0.2.3",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.9.5",
+    "morgan": "^1.10.0",
+    "nodemailer": "^7.0.13",
+    "pdfkit": "^0.18.0",
+    "razorpay": "^2.9.6",
+    "socket.io": "^4.8.3",
+    "xss-clean": "^0.1.4"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
