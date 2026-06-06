@@ -65,8 +65,8 @@ const MarketOverview = ({ isLoading }) => {
               key={tf}
               onClick={() => setActiveTimeframe(tf)}
               className={`px-3 py-1.5 text-[10px] font-bold rounded-md transition-all ${activeTimeframe === tf
-                  ? 'bg-primary-500 text-white shadow-md'
-                  : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+                ? 'bg-primary-500 text-white shadow-md'
+                : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
                 }`}
             >
               {tf}
@@ -97,7 +97,10 @@ const MarketOverview = ({ isLoading }) => {
               axisLine={false}
               tickLine={false}
               tick={{ fill: isDark ? '#94a3b8' : '#64748b', fontSize: 10 }}
-              tickFormatter={(value) => `$${value > 1000 ? (value / 1000).toFixed(1) + 'k' : value}`}
+              tickFormatter={(value) => {
+                if (typeof value !== 'number') return value;
+                return `$${value > 1000 ? (value / 1000).toFixed(1) + 'k' : value}`;
+              }}
               width={50}
             />
             <Tooltip content={<CustomTooltip />} />

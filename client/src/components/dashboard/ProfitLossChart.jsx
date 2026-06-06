@@ -102,7 +102,7 @@ const ProfitLossChart = ({ isLoading: parentLoading }) => {
                 axisLine={false}
                 tickLine={false}
                 tick={{ fill: isDark ? '#94a3b8' : '#64748b', fontSize: 12 }}
-                tickFormatter={(v) => `$${v}`}
+                tickFormatter={(v) => typeof v === 'number' ? `$${v}` : v}
                 width={60}
               />
               <Tooltip content={<CustomTooltip />} cursor={{ fill: isDark ? 'rgba(51,65,85,0.2)' : 'rgba(226,232,240,0.4)' }} />

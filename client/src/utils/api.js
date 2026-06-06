@@ -35,7 +35,7 @@ const onRefreshComplete = (token) => {
 };
 
 // ==================== Request Interceptor ====================
-// Every request-ல automatically JWT token attach பண்ணும்
+// Every request-ல automatically JWT token attached
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
