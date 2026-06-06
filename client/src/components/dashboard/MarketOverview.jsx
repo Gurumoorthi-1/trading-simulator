@@ -101,7 +101,7 @@ const MarketOverview = ({ isLoading }) => {
                 if (typeof value !== 'number') return value;
                 return `$${value > 1000 ? (value / 1000).toFixed(1) + 'k' : value}`;
               }}
-              width={50}
+              width={55}
             />
             <Tooltip content={<CustomTooltip />} />
             <Area

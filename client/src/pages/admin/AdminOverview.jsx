@@ -124,8 +124,8 @@ const AdminOverview = () => {
                     <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <XAxis dataKey="date" tick={axisTickStyle} axisLine={false} tickLine={false} />
-                <YAxis tick={axisTickStyle} axisLine={false} tickLine={false} />
+                <XAxis dataKey="date" tick={{ fill: isDark ? '#94a3b8' : '#64748b', fontSize: 12 }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fill: isDark ? '#94a3b8' : '#64748b', fontSize: 12 }} axisLine={false} tickLine={false} />
                 <Tooltip {...tooltipStyle} />
                 <Area type="monotone" dataKey="count" stroke="#3b82f6" fillOpacity={1} fill="url(#colorUsers)" />
               </AreaChart>
@@ -145,8 +145,8 @@ const AdminOverview = () => {
                     <stop offset="95%" stopColor="#22c55e" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <XAxis dataKey="date" tick={axisTickStyle} axisLine={false} tickLine={false} />
-                <YAxis tick={axisTickStyle} axisLine={false} tickLine={false} />
+                <XAxis dataKey="date" tick={{ fill: isDark ? '#94a3b8' : '#64748b', fontSize: 12 }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fill: isDark ? '#94a3b8' : '#64748b', fontSize: 12 }} axisLine={false} tickLine={false} />
                 <Tooltip {...tooltipStyle} />
                 <Area type="monotone" dataKey="amount" stroke="#22c55e" fillOpacity={1} fill="url(#colorRevenue)" />
               </AreaChart>
@@ -163,8 +163,8 @@ const AdminOverview = () => {
           ) : (
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={stats?.tradesTrend || []}>
-                <XAxis dataKey="date" tick={axisTickStyle} axisLine={false} tickLine={false} />
-                <YAxis tick={axisTickStyle} axisLine={false} tickLine={false} />
+                <XAxis dataKey="date" tick={{ fill: isDark ? '#94a3b8' : '#64748b', fontSize: 12 }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fill: isDark ? '#94a3b8' : '#64748b', fontSize: 12 }} axisLine={false} tickLine={false} />
                 <Tooltip {...tooltipStyle} />
                 <Bar dataKey="count" fill="#8b5cf6" radius={[6, 6, 0, 0]} />
               </BarChart>
