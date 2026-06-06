@@ -85,22 +85,6 @@ const MarketOverview = ({ isLoading }) => {
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={isDark ? "#334155" : "#e2e8f0"} opacity={0.4} />
-            <XAxis
-              dataKey="name"
-              axisLine={false}
-              tickLine={false}
-              dy={10}
-              interval={activeTimeframe === '1M' ? 5 : 'preserveStartEnd'}
-            />
-            <YAxis
-              axisLine={false}
-              tickLine={false}
-              tickFormatter={(value) => {
-                if (typeof value !== 'number') return value;
-                return `$${value > 1000 ? (value / 1000).toFixed(1) + 'k' : value}`;
-              }}
-              width={55}
-            />
             <Tooltip content={<CustomTooltip />} />
             <Area
               type="monotone"
