@@ -212,8 +212,11 @@ export const forgotPassword = async (req, res, next) => {
     };
     await user.save({ validateBeforeSave: false });
 
-    await sendOTPEmail(email, otpCode, 'reset');
-    console.log(`Reset Generated OTP for ${email}: ${otpCode}`);
+    const emailSent = await sendOTPEmail(email, otpCode, 'reset');
+
+    if (!emailSent) {
+      return next(new AppError('Failed to send password reset email. Please try again later.', 500));
+    }
 
     res.status(200).json({
       success: true,
