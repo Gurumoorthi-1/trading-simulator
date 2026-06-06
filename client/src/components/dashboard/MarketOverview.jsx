@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { Activity } from 'lucide-react';
 import { Skeleton } from '../ui/Skeleton';
 import { useThemeStore } from '../../context/store';
 

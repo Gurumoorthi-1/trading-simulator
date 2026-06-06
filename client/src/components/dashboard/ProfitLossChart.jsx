@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { TrendingUp } from 'lucide-react';
 import { Skeleton } from '../ui/Skeleton';
 import { useThemeStore } from '../../context/store';
 import { getWeeklyPnL } from '../../utils/services';
