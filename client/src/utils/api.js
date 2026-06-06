@@ -1,8 +1,9 @@
 import axios from 'axios';
 
 // ==================== Axios Base Instance ====================
-// Backend URL - Production-ல relative path (/api) use பண்ணும், இல்லனா env variable-ல இருந்து எடுக்கும்
-const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '/api' : 'http://localhost:5000/api');
+// Dev: http://localhost:5000/api
+// Production (Vercel + Render): VITE_API_URL set in Vercel environment variables pointing to Render backend
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
