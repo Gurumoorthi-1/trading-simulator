@@ -95,13 +95,11 @@ const ProfitLossChart = ({ isLoading: parentLoading }) => {
                 dataKey="name"
                 axisLine={false}
                 tickLine={false}
-                tick={{ fill: isDark ? '#94a3b8' : '#64748b', fontSize: 12 }}
                 dy={10}
               />
               <YAxis
                 axisLine={false}
                 tickLine={false}
-                tick={{ fill: isDark ? '#94a3b8' : '#64748b', fontSize: 12 }}
                 tickFormatter={(v) => typeof v === 'number' ? `$${v}` : v}
                 width={60}
               />

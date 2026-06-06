@@ -89,14 +89,12 @@ const MarketOverview = ({ isLoading }) => {
               dataKey="name"
               axisLine={false}
               tickLine={false}
-              tick={{ fill: isDark ? '#94a3b8' : '#64748b', fontSize: 10 }}
               dy={10}
               interval={activeTimeframe === '1M' ? 5 : 'preserveStartEnd'}
             />
             <YAxis
               axisLine={false}
               tickLine={false}
-              tick={{ fill: isDark ? '#94a3b8' : '#64748b', fontSize: 10 }}
               tickFormatter={(value) => {
                 if (typeof value !== 'number') return value;
                 return `$${value > 1000 ? (value / 1000).toFixed(1) + 'k' : value}`;
