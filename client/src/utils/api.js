@@ -64,7 +64,8 @@ api.interceptors.response.use(
         localStorage.removeItem('token');
         localStorage.removeItem('refreshToken');
         localStorage.removeItem('user');
-        if (window.location.pathname !== '/login') {
+        localStorage.removeItem('auth-storage');
+        if (window.location.pathname !== '/login' && window.location.pathname !== '/register') {
           window.location.href = '/login';
         }
         return Promise.reject(error);
@@ -104,8 +105,9 @@ api.interceptors.response.use(
           localStorage.removeItem('token');
           localStorage.removeItem('refreshToken');
           localStorage.removeItem('user');
+          localStorage.removeItem('auth-storage');
           refreshSubscribers = [];
-          if (window.location.pathname !== '/login') {
+          if (window.location.pathname !== '/login' && window.location.pathname !== '/register') {
             window.location.href = '/login';
           }
           return Promise.reject(refreshError);
