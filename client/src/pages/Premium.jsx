@@ -110,8 +110,9 @@ const faqs = [
   }
 ];
 
-const PricingCard = ({ plan, index, onSelect, loading, loadingPlanId }) => {
+const PricingCard = ({ plan, index, onSelect, loading, loadingPlanId, currentPlan, isPremiumActive }) => {
   const isLoading = loading && loadingPlanId === plan.id;
+  const isCurrentPlan = isPremiumActive && currentPlan === plan.id;
 
   return (
     <motion.div
@@ -121,10 +122,19 @@ const PricingCard = ({ plan, index, onSelect, loading, loadingPlanId }) => {
       className={`relative rounded-3xl p-[1px] ${plan.popular ? 'bg-gradient-to-b from-primary-500 to-purple-600' : 'bg-dark-border/60'}`}
     >
       {/* Popular Badge */}
-      {plan.popular && (
+      {plan.popular && !isCurrentPlan && (
         <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-10">
           <div className="bg-gradient-to-r from-primary-600 to-purple-600 text-white px-5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 shadow-lg shadow-primary-500/30">
             <Sparkles size={12} /> Most Popular
+          </div>
+        </div>
+      )}
+
+      {/* Current Plan Badge */}
+      {isCurrentPlan && (
+        <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-10">
+          <div className="bg-gradient-to-r from-emerald-600 to-green-600 text-white px-5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 shadow-lg shadow-emerald-500/30">
+            <CheckCircle2 size={12} /> Current Plan
           </div>
         </div>
       )}
@@ -171,13 +181,18 @@ const PricingCard = ({ plan, index, onSelect, loading, loadingPlanId }) => {
           {/* CTA Button */}
           <button
             onClick={() => onSelect(plan)}
-            disabled={isLoading}
-            className={`w-full py-3.5 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 ${plan.buttonStyle} disabled:opacity-70 disabled:cursor-not-allowed`}
+            disabled={isLoading || isCurrentPlan}
+            className={`w-full py-3.5 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 ${isCurrentPlan ? 'bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 cursor-not-allowed' : plan.buttonStyle} disabled:opacity-70 disabled:cursor-not-allowed`}
           >
             {isLoading ? (
               <>
                 <Loader2 size={16} className="animate-spin" />
                 Processing...
+              </>
+            ) : isCurrentPlan ? (
+              <>
+                <CheckCircle2 size={16} />
+                Active Plan
               </>
             ) : (
               <>
@@ -335,10 +350,24 @@ const Premium = () => {
   const [loadingPlanId, setLoadingPlanId] = useState(null);
   const { user: authUser } = useAuthStore(); // renamed to avoid shadowing
 
+  // Compute active plan status
+  const isPremiumActive =
+    authUser?.isPremium &&
+    authUser?.premiumExpiresAt &&
+    new Date(authUser.premiumExpiresAt) > new Date();
+  const currentPlan = isPremiumActive ? authUser?.subscriptionPlan : null;
+
   const handleSelectPlan = async (plan) => {
     if (plan.price === 0) {
       // Basic plan - just update (if needed)
       setSelectedPlan(plan);
+      return;
+    }
+
+    // Prevent duplicate purchase on frontend
+    if (isPremiumActive && currentPlan === plan.id) {
+      setErrorMessage(`You already have an active ${plan.name} plan.`);
+      setShowFailure(true);
       return;
     }
 
@@ -469,6 +498,8 @@ const Premium = () => {
             onSelect={handleSelectPlan}
             loading={loading}
             loadingPlanId={loadingPlanId}
+            currentPlan={currentPlan}
+            isPremiumActive={isPremiumActive}
           />
         ))}
       </div>

@@ -39,11 +39,30 @@ export const createOrder = async (req, res, next) => {
     const { plan } = req.body;
     console.log('Plan received:', plan);
 
-    if (!plan || !PLAN_PRICES[plan]) {
+    if (!plan || !PLAN_PRICES.hasOwnProperty(plan)) {
       console.log('Invalid plan selected:', plan);
       return res.status(400).json({
         success: false,
         message: 'Invalid plan selected'
+      });
+    }
+
+    // Check if user already has this plan active
+    const currentUser = await User.findById(req.user._id);
+    if (!currentUser) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    const now = new Date();
+    const isPremiumActive =
+      currentUser.isPremium &&
+      currentUser.premiumExpiresAt &&
+      new Date(currentUser.premiumExpiresAt) > now;
+
+    if (isPremiumActive && currentUser.subscriptionPlan === plan) {
+      return res.status(400).json({
+        success: false,
+        message: `You already have an active ${plan} plan. It expires on ${new Date(currentUser.premiumExpiresAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}.`
       });
     }
 
@@ -160,6 +179,22 @@ export const verifyPayment = async (req, res, next) => {
       return res.status(404).json({
         success: false,
         message: 'Payment record not found'
+      });
+    }
+
+    // Second-layer check: prevent API-level bypass of duplicate plan purchase
+    const userBeforeUpdate = await User.findById(req.user._id);
+    const nowCheck = new Date();
+    const alreadyActive =
+      userBeforeUpdate.isPremium &&
+      userBeforeUpdate.subscriptionPlan === plan &&
+      userBeforeUpdate.premiumExpiresAt &&
+      new Date(userBeforeUpdate.premiumExpiresAt) > nowCheck;
+
+    if (alreadyActive) {
+      return res.status(400).json({
+        success: false,
+        message: `You already have an active ${plan} plan. Please wait until it expires before purchasing again.`
       });
     }
 
