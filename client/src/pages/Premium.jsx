@@ -110,11 +110,9 @@ const faqs = [
   }
 ];
 
-const PricingCard = ({ plan, index, onSelect, loading, loadingPlanId, currentPlan, isPremiumActive }) => {
+const PricingCard = ({ plan, index, onSelect, loading, loadingPlanId, currentPlan }) => {
   const isLoading = loading && loadingPlanId === plan.id;
-  const isCurrentPlan = isPremiumActive
-    ? currentPlan === plan.id
-    : plan.id === 'basic';
+  const isCurrentPlan = currentPlan === plan.id;
 
   return (
     <motion.div
@@ -357,19 +355,19 @@ const Premium = () => {
     authUser?.isPremium &&
     authUser?.premiumExpiresAt &&
     new Date(authUser.premiumExpiresAt) > new Date();
-  const currentPlan = isPremiumActive ? authUser?.subscriptionPlan : null;
+  const currentPlan = isPremiumActive ? authUser?.subscriptionPlan : 'basic';
 
   const handleSelectPlan = async (plan) => {
-    if (plan.price === 0) {
-      // Basic plan - just update (if needed)
-      setSelectedPlan(plan);
+    // Prevent selecting already active plan
+    if (currentPlan === plan.id) {
+      setErrorMessage(`You already have an active ${plan.name} plan.`);
+      setShowFailure(true);
       return;
     }
 
-    // Prevent duplicate purchase on frontend
-    if (isPremiumActive && currentPlan === plan.id) {
-      setErrorMessage(`You already have an active ${plan.name} plan.`);
-      setShowFailure(true);
+    if (plan.price === 0) {
+      // Basic plan - just update (if needed)
+      setSelectedPlan(plan);
       return;
     }
 
@@ -501,7 +499,6 @@ const Premium = () => {
             loading={loading}
             loadingPlanId={loadingPlanId}
             currentPlan={currentPlan}
-            isPremiumActive={isPremiumActive}
           />
         ))}
       </div>
