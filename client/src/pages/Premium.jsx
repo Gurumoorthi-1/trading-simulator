@@ -112,7 +112,9 @@ const faqs = [
 
 const PricingCard = ({ plan, index, onSelect, loading, loadingPlanId, currentPlan, isPremiumActive }) => {
   const isLoading = loading && loadingPlanId === plan.id;
-  const isCurrentPlan = isPremiumActive && currentPlan === plan.id;
+  const isCurrentPlan = isPremiumActive
+    ? currentPlan === plan.id
+    : plan.id === 'basic';
 
   return (
     <motion.div
