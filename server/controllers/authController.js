@@ -12,7 +12,7 @@ import crypto from 'crypto';
 
 // ==================== Helper: Generate 6-digit OTP ====================
 const generateOTP = () => {
-  return Math.floor(100000 + Math.random() * 900000).toString();
+  return crypto.randomInt(100000, 1000000).toString();
 };
 
 import { sendOTPEmail } from '../utils/emailService.js';

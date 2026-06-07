@@ -54,16 +54,24 @@ export const buyStock = async (req, res, next) => {
 
     const totalCost = quantity * price;
 
-    // Get user and check balance
-    const user = await User.findById(req.user._id);
+    // Deduct user balance atomically if sufficient
+    const user = await User.findOneAndUpdate(
+      { _id: req.user._id, balance: { $gte: totalCost } },
+      { $inc: { balance: -totalCost } },
+      { new: true, runValidators: true }
+    );
 
-    if (user.balance < totalCost) {
-      return next(
-        new AppError(
-          `Insufficient balance. Required: $${totalCost.toLocaleString()}, Available: $${user.balance.toLocaleString()}`,
-          400
-        )
-      );
+    if (!user) {
+      const checkUser = await User.findById(req.user._id);
+      if (checkUser && checkUser.balance < totalCost) {
+        return next(
+          new AppError(
+            `Insufficient balance. Required: $${totalCost.toLocaleString()}, Available: $${checkUser.balance.toLocaleString()}`,
+            400
+          )
+        );
+      }
+      return next(new AppError('Trade failed.', 400));
     }
 
     // Get or create portfolio
@@ -105,10 +113,7 @@ export const buyStock = async (req, res, next) => {
     portfolio.totalInvested = (portfolio.totalInvested || 0) + totalCost;
     await portfolio.save();
 
-    // Deduct balance from user
-    const newBalance = user.balance - totalCost;
-    user.balance = newBalance;
-    await user.save({ validateBeforeSave: false });
+    const newBalance = user.balance;
 
     // Record transaction
     const transaction = await Transaction.create({
@@ -223,29 +228,42 @@ export const sellStock = async (req, res, next) => {
       );
     }
 
-    // Update or remove holding
-    if (holding.shares === quantity) {
-      // Sell all - remove from portfolio
-      portfolio.holdings.splice(holdingIndex, 1);
-    } else {
-      // Partial sell - reduce shares
-      portfolio.holdings[holdingIndex] = {
-        ...holding.toObject(),
-        shares: holding.shares - quantity,
-        lastUpdatedAt: new Date(),
-      };
+    // Atomically check and deduct shares
+    const updatedPortfolio = await Portfolio.findOneAndUpdate(
+      { 
+        user: req.user._id, 
+        'holdings.symbol': symbol.toUpperCase(),
+        'holdings.shares': { $gte: quantity } 
+      },
+      {
+        $inc: { 'holdings.$.shares': -quantity },
+        $set: { 'holdings.$.lastUpdatedAt': new Date() }
+      },
+      { new: true }
+    );
+
+    if (!updatedPortfolio) {
+       return next(new AppError(`Transaction failed. Check your share balance.`, 400));
     }
 
-    // Update totalInvested (reduce by cost basis)
+    // Cost basis calculation (from original holding)
     const costBasis = quantity * holding.averagePrice;
-    portfolio.totalInvested = Math.max(0, (portfolio.totalInvested || 0) - costBasis);
-    await portfolio.save();
+    
+    // Recalculate totalInvested
+    updatedPortfolio.totalInvested = Math.max(0, (updatedPortfolio.totalInvested || 0) - costBasis);
+    
+    // Clean up empty holdings
+    updatedPortfolio.holdings = updatedPortfolio.holdings.filter(h => h.shares > 0);
+    await updatedPortfolio.save();
 
-    // Add money to user balance
-    const user = await User.findById(req.user._id);
-    const newBalance = user.balance + totalValue;
-    user.balance = newBalance;
-    await user.save({ validateBeforeSave: false });
+    // Add money to user balance atomically
+    const user = await User.findOneAndUpdate(
+      { _id: req.user._id },
+      { $inc: { balance: totalValue } },
+      { new: true, runValidators: true }
+    );
+    
+    const newBalance = user.balance;
 
     // Calculate profit/loss
     const profitLoss = totalValue - costBasis;

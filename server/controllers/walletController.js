@@ -39,12 +39,18 @@ export const deposit = async (req, res, next) => {
       return next(new AppError('Maximum deposit amount is $1,000,000.', 400));
     }
 
-    // Update user balance
-    const user = await User.findById(req.user._id);
-    const newBalance = user.balance + amount;
+    // Update user balance atomically
+    const user = await User.findOneAndUpdate(
+      { _id: req.user._id },
+      { $inc: { balance: amount } },
+      { new: true, runValidators: true }
+    );
 
-    user.balance = newBalance;
-    await user.save({ validateBeforeSave: false });
+    if (!user) {
+      return next(new AppError('User not found.', 404));
+    }
+    
+    const newBalance = user.balance;
 
     // Record transaction
     await Transaction.create({
@@ -107,21 +113,23 @@ export const withdraw = async (req, res, next) => {
       return next(new AppError('Minimum withdrawal amount is $100.', 400));
     }
 
-    const user = await User.findById(req.user._id);
+    // Check and deduct balance atomically
+    const user = await User.findOneAndUpdate(
+      { _id: req.user._id, balance: { $gte: amount } },
+      { $inc: { balance: -amount } },
+      { new: true, runValidators: true }
+    );
 
-    // Check sufficient balance
-    if (user.balance < amount) {
-      return next(
-        new AppError(
-          `Insufficient balance. Available: $${user.balance.toLocaleString()}`,
-          400
-        )
-      );
+    if (!user) {
+       // Either user doesn't exist or balance is insufficient
+       const checkUser = await User.findById(req.user._id);
+       if (checkUser && checkUser.balance < amount) {
+          return next(new AppError(`Insufficient balance. Available: $${checkUser.balance.toLocaleString()}`, 400));
+       }
+       return next(new AppError('Withdrawal failed.', 400));
     }
 
-    const newBalance = user.balance - amount;
-    user.balance = newBalance;
-    await user.save({ validateBeforeSave: false });
+    const newBalance = user.balance;
 
     // Record transaction
     await Transaction.create({

@@ -121,18 +121,23 @@ export const verifyPayment = async (req, res, next) => {
     hmac.update(razorpay_order_id + '|' + razorpay_payment_id);
     const generatedSignature = hmac.digest('hex');
 
+    // Check if payment was already successful to prevent Replay Attacks
+    const existingPayment = await PaymentHistory.findOne({ orderId: razorpay_order_id });
+    if (!existingPayment) {
+      return res.status(404).json({ success: false, message: 'Payment record not found' });
+    }
+    if (existingPayment.status === 'success') {
+      return res.status(400).json({ success: false, message: 'Payment already processed successfully' });
+    }
+
     // Verify signature
     if (generatedSignature !== razorpay_signature) {
       // Update payment history as failed
-      await PaymentHistory.findOneAndUpdate(
-        { orderId: razorpay_order_id },
-        {
-          status: 'failed',
-          paymentId: razorpay_payment_id,
-          razorpaySignature: razorpay_signature,
-          failureReason: 'Invalid signature'
-        }
-      );
+      existingPayment.status = 'failed';
+      existingPayment.paymentId = razorpay_payment_id;
+      existingPayment.razorpaySignature = razorpay_signature;
+      existingPayment.failureReason = 'Invalid signature';
+      await existingPayment.save();
 
       return res.status(400).json({
         success: false,
